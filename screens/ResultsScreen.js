@@ -98,7 +98,7 @@ export default class ResultsScreen extends React.Component {
       roundDate, hatHolder, winner, LurchScore, SpudScore,
       TurtleScore, HeffScore, FrostyScore
     } = this.state
-    const response = await axios.post('http://localhost:3000/results', {
+    await axios.post('https://chairmans-api.herokuapp.com/results', {
       roundDate, hatHolder, winner,
       scores: {
         Lurch: { score: LurchScore },
@@ -108,6 +108,7 @@ export default class ResultsScreen extends React.Component {
         Frosty: { score: FrostyScore },
       }
     })
+    this.props.navigation.navigate('Home')
   }
 
   render() {
@@ -171,28 +172,28 @@ const styles = StyleSheet.create({
     height: 30,
     width: 30,
     margin: 5,
-    marginRight: 20,
+    marginRight: 15,
     opacity: 0.2,
   },
   selectedHat: {
     height: 30,
     width: 30,
     margin: 5,
-    marginRight: 20,
+    marginRight: 15,
     opacity: 1,
   },
   trophy: {
     height: 30,
     width: 30,
     margin: 5,
-    marginRight: 20,
+    marginRight: 15,
     opacity: 0.2,
   },
   selectedTrophy: {
     height: 30,
     width: 30,
     margin: 5,
-    marginRight: 20,
+    marginRight: 15,
     opacity: 1,
   },
   buttonView: {

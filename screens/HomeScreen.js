@@ -6,7 +6,9 @@ import {
   Text,
   View,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
+import { Icon } from 'react-native-elements'
 import axios from 'axios'
 import _ from 'lodash'
 
@@ -29,14 +31,37 @@ export default class HomeScreen extends React.Component {
     mostWins: null,
     mostHats: null,
     immunePlayer: null,
+    refreshing: false,
   }
 
   componentDidMount() {
+    console.log('component mounted')
     this.makeApiRequest()
   }
 
+  shouldComponentUpdate() {
+    console.log('should update');
+    return true
+  }
+
+  componentWillMount() {
+    console.log('will mount');
+    return true
+  }
+
+  componentWillUnmount() {
+    console.log('will unmount');
+    return true
+  }
+
+  _onRefresh = async () => {
+    this.setState({ refreshing: true })
+    await this.makeApiRequest()
+    this.setState({ refreshing: false })
+  }
+
   async makeApiRequest() {
-    const res = await axios.get('http://localhost:3000/results?from=2018-01-01')
+    const res = await axios.get('https://chairmans-api.herokuapp.com/results?from=2018-01-01')
     const { players, results } = res.data
     if (results.length) {
       this.getHatHolder(results, players)
@@ -59,9 +84,6 @@ export default class HomeScreen extends React.Component {
   }
 
   _resultsPerPlayer(playerId, rewards) {
-    if (playerId === 11) {
-      // console.log('results per player', playerId, rewards);
-    }
     return rewards.reduce((acc, reward) => {
       if (reward === playerId) acc += 1
       return acc
@@ -107,7 +129,14 @@ export default class HomeScreen extends React.Component {
     const { hatHolder, mostHats, mostWins, highestAverage, immunePlayer } = this.state
     if (mostHats && mostWins) {
       return (
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }
+        >
           <Card
             data={hatHolder}
             navigation={this.props.navigation}

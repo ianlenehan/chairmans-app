@@ -86,7 +86,11 @@ export default class Card extends React.Component {
           <View style={{ alignItems: 'center' }}>
             <Text style={styles.subtitle}>{this.props.subtitle || ''}</Text>
             {this._renderMostImage()}
-            <Text style={styles.nickName}>{nickNames.join(', ')} ({data.most})</Text>
+            <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 5 }}>
+              <Text style={styles.nickName}>{nickNames.join(', ')}</Text>
+              {this._subtitle()}
+            </View>
+
             {this._renderStats()}
           </View>
         )
@@ -140,20 +144,14 @@ const styles = StyleSheet.create({
     fontSize: 18
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 14,
     color: 'white',
-  },
-  mostView: {
-    borderRadius: 50,
-    alignItems: 'center',
-  },
-  mostNumber: {
-    fontSize: 28,
+    fontWeight: 'bold'
   },
   circle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     marginLeft: 10,
     backgroundColor: Colours.chairmansPink,
     alignItems: 'center',
