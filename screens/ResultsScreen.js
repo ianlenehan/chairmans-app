@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, Image, TextInput, TouchableOpacity, DatePickerIOS } from 'react-native';
+import { View, ScrollView, StyleSheet, Text, Image, TextInput, TouchableOpacity, DatePickerIOS } from 'react-native';
 import { List, ListItem, Button } from 'react-native-elements';
 import axios from 'axios';
 import { players } from '../players';
@@ -94,7 +94,6 @@ export default class ResultsScreen extends React.Component {
   }
 
   _submitScores = async () => {
-    console.log('things to send', this.state.roundDate, this.state.hatHolder, this.state.winner, this.state.LurchScore, this.state.SpudScore);
     const {
       roundDate, hatHolder, winner, LurchScore, SpudScore,
       TurtleScore, HeffScore, FrostyScore
@@ -109,13 +108,12 @@ export default class ResultsScreen extends React.Component {
         Frosty: { score: FrostyScore },
       }
     })
-    console.log('response', response)
   }
 
   render() {
     const _sumbitScores = this._submitScores
     return (
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <DatePickerIOS
           style={styles.pickerStyle}
           date={this.state.roundDate}
@@ -130,14 +128,14 @@ export default class ResultsScreen extends React.Component {
             onPress={() => _sumbitScores()}
           />
         </View>
-      </View>
+      </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     paddingTop: 15,
     backgroundColor: '#fff',
   },

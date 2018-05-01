@@ -107,31 +107,31 @@ export default class HomeScreen extends React.Component {
     const { hatHolder, mostHats, mostWins, highestAverage, immunePlayer } = this.state
     if (mostHats && mostWins) {
       return (
-        <ScrollView style={styles.container}>
-        <Card
-        data={hatHolder}
-        navigation={this.props.navigation}
-        title='Current Hat Holder'
-        singlePlayer
-        />
-        <Card
-        data={immunePlayer}
-        navigation={this.props.navigation}
-        title='Four Point Advantage'
-        singlePlayer
-        />
-        <Card
-        data={mostHats}
-        navigation={this.props.navigation}
-        title='Most Hats'
-        subtitle={mostHats.most}
-        />
-        <Card
-        data={mostWins}
-        navigation={this.props.navigation}
-        title='Most Wins'
-        subtitle={mostWins.most}
-        />
+        <ScrollView>
+          <Card
+            data={hatHolder}
+            navigation={this.props.navigation}
+            title='Current Hat Holder'
+            singlePlayer
+          />
+          <Card
+            data={immunePlayer}
+            navigation={this.props.navigation}
+            title='Four Point Advantage'
+            singlePlayer
+          />
+          <Card
+            data={mostHats}
+            navigation={this.props.navigation}
+            title='Most Hats'
+            subtitle={mostHats.most}
+          />
+          <Card
+            data={mostWins}
+            navigation={this.props.navigation}
+            title='Most Wins'
+            subtitle={mostWins.most}
+          />
         </ScrollView>
       );
     }
@@ -140,10 +140,6 @@ export default class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#dcdcdc',
-  },
   titleText: {
     marginBottom: 20,
     color: 'rgba(0,0,0,0.4)',
