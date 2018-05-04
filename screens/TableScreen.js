@@ -27,7 +27,6 @@ export default class TableScreen extends React.Component {
 
   sortData(keyword) {
     const { data } = this.props.navigation.state
-    console.log('data', data)
   }
 
   render() {

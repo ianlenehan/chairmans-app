@@ -42,7 +42,6 @@ export default class PlayersScreen extends React.Component {
 
   render() {
     const { player } = this.props.navigation.state.params
-    console.log('player', player);
     return (
       <View style={styles.container}>
         <View style={styles.playerDetails}>

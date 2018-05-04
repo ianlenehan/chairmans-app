@@ -1,8 +1,20 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text, Image, TextInput, TouchableOpacity, DatePickerIOS } from 'react-native';
-import { List, ListItem, Button } from 'react-native-elements';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  DatePickerIOS,
+  Alert
+} from 'react-native';
+import { List,
+  ListItem, Button } from 'react-native-elements';
 import axios from 'axios';
 import { players } from '../players';
+import Layout from '../constants/Layout'
 import Colours from '../constants/Colours'
 
 export default class ResultsScreen extends React.Component {
@@ -23,6 +35,7 @@ export default class ResultsScreen extends React.Component {
       winner: '',
       selectedHat: '',
       selectedTrophy: '',
+      loading: false,
     }
   }
 
@@ -78,12 +91,13 @@ export default class ResultsScreen extends React.Component {
             source={{uri: player.avatar_url}}
             style={styles.image}
           />
-          <Text style={styles.playerName}>{player.nick_name}</Text>
+          <Text style={styles.playerName}>{player.full_name}</Text>
           <View style={styles.inputView}>
             {this._renderTrophyImage(player, i)}
             {this._renderHatImage(player, i)}
             <TextInput
               style={styles.inputStyle}
+              keyboardType='numeric'
               onChangeText={(text) => this.setState({ [`${player.nick_name}Score`]: text })}
               value={this.state[`${player.nick_name}Score`]}
             />
@@ -93,26 +107,49 @@ export default class ResultsScreen extends React.Component {
     })
   }
 
-  _submitScores = async () => {
-    const {
-      roundDate, hatHolder, winner, LurchScore, SpudScore,
-      TurtleScore, HeffScore, FrostyScore
-    } = this.state
-    await axios.post('https://chairmans-api.herokuapp.com/results', {
-      roundDate, hatHolder, winner,
-      scores: {
-        Lurch: { score: LurchScore },
-        Spud: { score: SpudScore },
-        Turtle: { score: TurtleScore },
-        Heff: { score: HeffScore },
-        Frosty: { score: FrostyScore },
-      }
+  _resetState = () => {
+    this.setState({
+      roundDate: new Date(),
+      LurchScore: '',
+      SpudScore: '',
+      TurtleScore: '',
+      HeffScore: '',
+      FrostyScore: '',
+      hatHolder: '',
+      winner: '',
+      selectedHat: '',
+      selectedTrophy: '',
+      loading: false
     })
-    this.props.navigation.navigate('Home')
+  }
+
+  _submitScores = async () => {
+    if (this.state.loading) {
+      Alert.alert('Fucking relax', "I'm working on it")
+    } else {
+      this.setState({ loading: true })
+      const {
+        roundDate, hatHolder, winner, LurchScore, SpudScore,
+        TurtleScore, HeffScore, FrostyScore
+      } = this.state
+      await axios.post('https://chairmans-api.herokuapp.com/results', {
+        roundDate, hatHolder, winner,
+        scores: {
+          Lurch: { score: LurchScore },
+          Spud: { score: SpudScore },
+          Turtle: { score: TurtleScore },
+          Heff: { score: HeffScore },
+          Frosty: { score: FrostyScore },
+        }
+      })
+      this._resetState()
+      this.props.navigation.navigate('Home')
+    }
   }
 
   render() {
-    const _sumbitScores = this._submitScores
+    const _submitScores = this._submitScores
+    const { loading } = this.state
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <DatePickerIOS
@@ -125,14 +162,21 @@ export default class ResultsScreen extends React.Component {
         <View style={styles.buttonView}>
           <Button
             buttonStyle={{ backgroundColor: Colours.chairmansPink }}
-            title="SUBMIT"
-            onPress={() => _sumbitScores()}
+            title={loading ? "...fucking wait" : "SUBMIT" }
+            onPress={() => this._submitScores()}
+          />
+          <Button
+            buttonStyle={{ backgroundColor: Colours.chairmansPink, marginTop: 10 }}
+            title="RESET"
+            onPress={() => this._resetState()}
           />
         </View>
       </ScrollView>
     );
   }
 }
+
+const small = Layout.isSmallDevice
 
 const styles = StyleSheet.create({
   container: {
@@ -143,17 +187,18 @@ const styles = StyleSheet.create({
   playerView: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 50,
-    padding: 10,
-    margin: 15,
+    height: small ? 35 : 50,
+    padding: 5,
+    margin: 10,
   },
   image: {
-    height: 40,
-    width: 40,
+    height: small ? 35 : 40,
+    width: small ? 35 : 40,
   },
   playerName: {
-    fontSize: 22,
-    marginLeft: 10,
+    fontSize: small ? 18 : 24,
+    marginLeft: small ? 5 : 10,
+    fontFamily: 'gamja-flower'
   },
   inputView: {
     flex: 1,
@@ -161,39 +206,39 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   inputStyle: {
-    height: 40,
-    width: 40,
+    height: small ? 35 : 40,
+    width: small ? 35 : 40,
     backgroundColor: '#ecf0f1',
-    fontSize: 18,
+    fontSize: small ? 16 : 18,
     textAlign: 'center',
-    marginLeft: 10,
+    marginLeft: small ? 5 : 10,
   },
   hat: {
-    height: 30,
-    width: 30,
+    height: small ? 25 : 30,
+    width: small ? 25 : 30,
     margin: 5,
-    marginRight: 15,
+    marginRight: small ? 5 : 12,
     opacity: 0.2,
   },
   selectedHat: {
-    height: 30,
-    width: 30,
+    height: small ? 25 : 30,
+    width: small ? 25 : 30,
     margin: 5,
-    marginRight: 15,
+    marginRight: small ? 5 : 12,
     opacity: 1,
   },
   trophy: {
-    height: 30,
-    width: 30,
+    height: small ? 25 : 30,
+    width: small ? 25 : 30,
     margin: 5,
-    marginRight: 15,
+    marginRight: small ? 5 : 12,
     opacity: 0.2,
   },
   selectedTrophy: {
-    height: 30,
-    width: 30,
+    height: small ? 25 : 30,
+    width: small ? 25 : 30,
     margin: 5,
-    marginRight: 15,
+    marginRight: small ? 5 : 12,
     opacity: 1,
   },
   buttonView: {

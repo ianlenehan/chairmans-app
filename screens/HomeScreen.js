@@ -30,28 +30,14 @@ export default class HomeScreen extends React.Component {
     hatHolder: null,
     mostWins: null,
     mostHats: null,
+    allWins: null,
+    allHats: null,
     immunePlayer: null,
     refreshing: false,
   }
 
   componentDidMount() {
-    console.log('component mounted')
     this.makeApiRequest()
-  }
-
-  shouldComponentUpdate() {
-    console.log('should update');
-    return true
-  }
-
-  componentWillMount() {
-    console.log('will mount');
-    return true
-  }
-
-  componentWillUnmount() {
-    console.log('will unmount');
-    return true
   }
 
   _onRefresh = async () => {
@@ -68,6 +54,8 @@ export default class HomeScreen extends React.Component {
       this.getImmunePlayer(results, players)
       this.getMostHats(results, players)
       this.getMostWins(results, players)
+      this.getAllHats(results, players)
+      this.getAllWins(results, players)
     }
   }
 
@@ -118,6 +106,25 @@ export default class HomeScreen extends React.Component {
     this.setState({ mostHats })
   }
 
+  _allCounts(players, rewards) {
+    return players.map((player) => {
+      const total = this._resultsPerPlayer(player.id, rewards)
+      return { playerName: player.nick_name, total }
+    })
+  }
+
+  getAllHats(results, players) {
+    const rewards = results.map((result) => result.loser)
+    const allHats = this._allCounts(players, rewards)
+    this.setState({ allHats })
+  }
+
+  getAllWins(results, players) {
+    const rewards = results.map((result) => result.winner)
+    const allWins = this._allCounts(players, rewards)
+    this.setState({ allWins })
+  }
+
   getMostWins(results, players) {
     const rewards = results.map((result) => result.winner)
     const counts = this._initialCounts(players, rewards)
@@ -126,7 +133,7 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
-    const { hatHolder, mostHats, mostWins, highestAverage, immunePlayer } = this.state
+    const { hatHolder, mostHats, mostWins, allHats, allWins, highestAverage, immunePlayer } = this.state
     if (mostHats && mostWins) {
       return (
         <ScrollView
@@ -151,12 +158,14 @@ export default class HomeScreen extends React.Component {
           />
           <Card
             data={mostHats}
+            allData={allHats}
             navigation={this.props.navigation}
             title='Most Hats'
             subtitle={mostHats.most}
           />
           <Card
             data={mostWins}
+            allData={allWins}
             navigation={this.props.navigation}
             title='Most Wins'
             subtitle={mostWins.most}
@@ -164,7 +173,11 @@ export default class HomeScreen extends React.Component {
         </ScrollView>
       );
     }
-    return <ActivityIndicator/>
+    return (
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ActivityIndicator/>
+      </View>
+    )
   }
 }
 

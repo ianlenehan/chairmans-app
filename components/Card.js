@@ -13,16 +13,19 @@ export default class Card extends React.Component {
   }
 
   onPress = () => {
-    this.setState({ showStats: !this.state.showStats })
+    if (this.props.allData) {
+      this.setState({ showStats: !this.state.showStats })
+    }
   }
 
   _renderStats() {
     if (this.state.showStats) {
-      return (
-        <View>
-        <Text>List everyone else numbers here</Text>
-        </View>
-      )
+      const { allData } = this.props
+      return allData.map((player, i) => {
+        return (
+          <Text key={i}>{player.playerName} - {player.total}</Text>
+        )
+      })
     }
   }
 
@@ -132,7 +135,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   cardTitle: {
-    fontSize: 20,
+    fontSize: 28,
+    fontFamily: 'bangers',
+    color: 'rgb(255,0,128)',
+    padding: 5,
   },
   image: {
     width: 80,
@@ -141,12 +147,13 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   nickName: {
-    fontSize: 18
+    fontSize: 24,
+    fontFamily: 'gamja-flower'
   },
   subtitle: {
     fontSize: 14,
     color: 'white',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   circle: {
     width: 24,

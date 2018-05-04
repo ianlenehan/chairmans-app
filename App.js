@@ -33,13 +33,13 @@ export default class App extends React.Component {
     return Promise.all([
       Asset.loadAsync([
         require('./assets/images/meow.png'),
+        require('./assets/images/pink_hat.png'),
       ]),
       Font.loadAsync({
         // This is the font that we are using for our tab bar
         ...Ionicons.font,
-        // We include SpaceMono because we use it in HomeScreen.js. Feel free
-        // to remove this if you are not using it in your app
-        'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+        'bangers': require('./assets/fonts/Bangers-Regular.ttf'),
+        'gamja-flower': require('./assets/fonts/GamjaFlower-Regular.ttf'),
       }),
     ]);
   };
