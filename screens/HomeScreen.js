@@ -13,6 +13,7 @@ import axios from 'axios'
 import _ from 'lodash'
 
 import Card from '../components/Card';
+import AveragesCard from '../components/AveragesCard';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -31,6 +32,8 @@ export default class HomeScreen extends React.Component {
     mostWins: null,
     mostHats: null,
     allWins: null,
+    hatAvg: null,
+    winAvg: null,
     allHats: null,
     immunePlayer: null,
     refreshing: false,
@@ -48,14 +51,14 @@ export default class HomeScreen extends React.Component {
 
   async makeApiRequest() {
     const res = await axios.get('https://chairmans-api.herokuapp.com/results?from=2018-01-01')
-    const { players, results } = res.data
+    const { players, results, round_counts: roundCounts } = res.data
     if (results.length) {
       this.getHatHolder(results, players)
       this.getImmunePlayer(results, players)
       this.getMostHats(results, players)
       this.getMostWins(results, players)
-      this.getAllHats(results, players)
-      this.getAllWins(results, players)
+      this.getAllHats(results, players, roundCounts)
+      this.getAllWins(results, players, roundCounts)
     }
   }
 
@@ -113,16 +116,54 @@ export default class HomeScreen extends React.Component {
     })
   }
 
-  getAllHats(results, players) {
-    const rewards = results.map((result) => result.loser)
-    const allHats = this._allCounts(players, rewards)
-    this.setState({ allHats })
+  _sortedAvgs(averages) {
+    return averages.sort(function (a, b) {
+      return Number(b.avg) - Number(a.avg)
+    })
   }
 
-  getAllWins(results, players) {
+  _getHatAvgs(roundCounts, players, allHats) {
+    return roundCounts.map(rounds => {
+      const [player] = Object.keys(rounds)
+      const [length] = Object.values(rounds)
+      const [hats] = allHats.filter(playerData => {
+        return playerData["playerName"] === player
+      })
+      const [playerData] = players.filter(fullPlayer => {
+        return fullPlayer.nick_name === player
+      })
+      return {  player: playerData, avg: Number(hats.total) / length}
+    })
+  }
+
+  getAllHats(results, players, roundCounts) {
+    const rewards = results.map((result) => result.loser)
+    const allHats = this._allCounts(players, rewards)
+    const hatAvgs = this._getHatAvgs(roundCounts, players, allHats)
+    const sortedHatAvgs = this._sortedAvgs(hatAvgs)
+    this.setState({ allHats, hatAvg: sortedHatAvgs })
+  }
+
+  _getWinAvgs(roundCounts, players, allWins) {
+    return roundCounts.map(rounds => {
+      const [player] = Object.keys(rounds)
+      const [length] = Object.values(rounds)
+      const [wins] = allWins.filter(playerData => {
+        return playerData["playerName"] === player
+      })
+      const [playerData] = players.filter(fullPlayer => {
+        return fullPlayer.nick_name === player
+      })
+      return {  player: playerData, avg: Number(wins.total) / length}
+    })
+  }
+
+  getAllWins(results, players, roundCounts) {
     const rewards = results.map((result) => result.winner)
     const allWins = this._allCounts(players, rewards)
-    this.setState({ allWins })
+    const winAvgs = this._getWinAvgs(roundCounts, players, allWins)
+    const sortedWinAvgs = this._sortedAvgs(winAvgs)
+    this.setState({ allWins, winAvg: sortedWinAvgs })
   }
 
   getMostWins(results, players) {
@@ -133,8 +174,8 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
-    const { hatHolder, mostHats, mostWins, allHats, allWins, highestAverage, immunePlayer } = this.state
-    if (mostHats && mostWins) {
+    const { hatHolder, mostHats, mostWins, allHats, allWins, highestAverage, immunePlayer, hatAvg, winAvg } = this.state
+    if (mostHats && mostWins && hatAvg && winAvg) {
       return (
         <ScrollView
           refreshControl={
@@ -169,6 +210,20 @@ export default class HomeScreen extends React.Component {
             navigation={this.props.navigation}
             title='Most Wins'
             subtitle={mostWins.most}
+          />
+          <AveragesCard
+            data={hatAvg[0].player}
+            allData={hatAvg}
+            navigation={this.props.navigation}
+            title='Highest Hat Average'
+            subtitle={hatAvg[0].avg}
+          />
+          <AveragesCard
+            data={winAvg[0].player}
+            allData={winAvg}
+            navigation={this.props.navigation}
+            title='Highest Win Average'
+            subtitle={winAvg[0].avg}
           />
         </ScrollView>
       );

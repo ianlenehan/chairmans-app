@@ -23,7 +23,10 @@ export default class Card extends React.Component {
       const { allData } = this.props
       return allData.map((player, i) => {
         return (
-          <Text key={i}>{player.playerName} - {player.total}</Text>
+          <View key={i} style={{ flexDirection: 'row' }}>
+            <Text style={{ textAlign: 'right', flex: 1 }}>{player.playerName}</Text>
+            <Text style={{ fontWeight: 'bold', textAlign: 'left', flex: 1, marginLeft: 10 }}>{player.total}</Text>
+          </View>
         )
       })
     }

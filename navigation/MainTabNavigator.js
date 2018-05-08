@@ -8,13 +8,14 @@ import Colours from '../constants/Colours';
 import HomeScreen from '../screens/HomeScreen';
 import ResultsScreen from '../screens/ResultsScreen';
 import PlayersNavigator from './PlayersStackNavigator';
-import TableScreen from '../screens/TableScreen';
+import RoundsScreen from '../screens/RoundsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 export default TabNavigator(
   {
     Home: { screen: HomeScreen },
     Results: { screen: ResultsScreen },
+    Rounds: { screen: RoundsScreen },
   },
   {
     navigationOptions: ({ navigation }) => ({
@@ -40,7 +41,7 @@ export default TabNavigator(
           case 'Players':
             iconName = Platform.OS === 'ios' ? `ios-people${focused ? '' : '-outline'}` : 'android-people';
             break;
-          case 'Table':
+          case 'Rounds':
             iconName = Platform.OS === 'ios' ? `ios-list${focused ? '' : '-outline'}` : 'android-list';
             break;
           case 'Settings':
