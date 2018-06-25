@@ -119,7 +119,7 @@ export default class RoundsScreen extends React.Component {
             </View>
           </View>
           <Text style={styles.pullText}>Pull down to refresh</Text>
-          <Text style={styles.pullText}>V1</Text>
+          <Text style={styles.pullText}>{'V1.1'}</Text>
         </ScrollView>
       )
     } else {
