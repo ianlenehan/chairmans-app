@@ -52,12 +52,16 @@ export default class RoundsScreen extends React.Component {
               const winner = score.player_id === round.result.winner
               const loser = score.player_id === round.result.loser
               let style = styles.cellView
+              let cellStyle = styles.cell
               if (winner) style = styles.winnerCellView
-              if (loser) style = styles.loserCellView
+              if (loser) {
+                style = styles.loserCellView
+                cellStyle = styles.loserCell
+              }
               const s = score.score === 0 ? '-' : score.score
               return (
                 <View style={style} key={i}>
-                  <Text style={styles.cell}>{s}</Text>
+                  <Text style={cellStyle}>{s}</Text>
                 </View>
               )
             })
@@ -173,6 +177,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'gamja-flower',
     fontSize: 18,
+  },
+  loserCell: {
+    flex: 1,
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontFamily: 'gamja-flower',
+    fontSize: 18,
+    color: 'white',
   },
   playerCell: {
     flex: 1,
