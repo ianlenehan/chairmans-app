@@ -115,8 +115,8 @@ export default class ResultsScreen extends React.Component {
       TurtleScore: '',
       HeffScore: '',
       FrostyScore: '',
-      hatHolder: '',
-      winner: '',
+      hatHolder: null,
+      winner: null,
       selectedHat: '',
       selectedTrophy: '',
       loading: false
@@ -124,26 +124,30 @@ export default class ResultsScreen extends React.Component {
   }
 
   _submitScores = async () => {
-    if (this.state.loading) {
-      Alert.alert('Fucking relax', "I'm working on it")
+    if (this.state.hatHolder && this.state.winner) {
+      if (this.state.loading) {
+        Alert.alert('Fucking relax', "I'm working on it")
+      } else {
+        this.setState({ loading: true })
+        const {
+          roundDate, hatHolder, winner, LurchScore, SpudScore,
+          TurtleScore, HeffScore, FrostyScore
+        } = this.state
+        await axios.post('https://chairmans-api.herokuapp.com/results', {
+          roundDate, hatHolder, winner,
+          scores: {
+            Lurch: { score: LurchScore },
+            Spud: { score: SpudScore },
+            Turtle: { score: TurtleScore },
+            Heff: { score: HeffScore },
+            Frosty: { score: FrostyScore },
+          }
+        })
+        this._resetState()
+        this.props.navigation.navigate('Home')
+      }
     } else {
-      this.setState({ loading: true })
-      const {
-        roundDate, hatHolder, winner, LurchScore, SpudScore,
-        TurtleScore, HeffScore, FrostyScore
-      } = this.state
-      await axios.post('https://chairmans-api.herokuapp.com/results', {
-        roundDate, hatHolder, winner,
-        scores: {
-          Lurch: { score: LurchScore },
-          Spud: { score: SpudScore },
-          Turtle: { score: TurtleScore },
-          Heff: { score: HeffScore },
-          Frosty: { score: FrostyScore },
-        }
-      })
-      this._resetState()
-      this.props.navigation.navigate('Home')
+      Alert.alert('Hang on', 'You must select a winner and a loser')
     }
   }
 
@@ -162,7 +166,7 @@ export default class ResultsScreen extends React.Component {
         <View style={styles.buttonView}>
           <Button
             buttonStyle={{ backgroundColor: Colours.chairmansPink }}
-            title={loading ? "...fucking wait" : "SUBMIT" }
+            title={loading ? "...wait for it" : "SUBMIT" }
             onPress={() => this._submitScores()}
           />
           <Button
