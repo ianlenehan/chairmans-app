@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
-import { Icon } from 'react-native-elements'
+import { Button } from 'react-native-elements'
 import axios from 'axios'
 import _ from 'lodash'
 
@@ -37,6 +37,7 @@ export default class HomeScreen extends React.Component {
     allHats: null,
     immunePlayer: null,
     refreshing: false,
+    fromDate: "2019-01-01"
   }
 
   componentDidMount() {
@@ -50,7 +51,8 @@ export default class HomeScreen extends React.Component {
   }
 
   async makeApiRequest() {
-    const res = await axios.get('https://chairmans-api.herokuapp.com/results?from=2018-01-01')
+    const { fromDate } = this.state
+    const res = await axios.get(`https://chairmans-api.herokuapp.com/results?from=${fromDate}`)
     const { players, results, round_counts: roundCounts } = res.data
     if (results.length) {
       this.getHatHolder(results, players)
@@ -173,6 +175,11 @@ export default class HomeScreen extends React.Component {
     this.setState({ mostWins })
   }
 
+  filterByYear = async (fromDate) => {
+    await this.setState({ fromDate })
+    this.makeApiRequest()
+  }
+
   render() {
     const { hatHolder, mostHats, mostWins, allHats, allWins, highestAverage, immunePlayer, hatAvg, winAvg } = this.state
     if (mostHats && mostWins && hatAvg && winAvg) {
@@ -185,6 +192,12 @@ export default class HomeScreen extends React.Component {
             />
           }
         >
+        <View style={{ display: "flex", flex: 1, flexDirection: "row", justifyContent: "center" }}>
+         <Button
+          title='2018' borderRadius={5} onPress={() => this.filterByYear('2018-01-01')} />
+          <Button
+          title='2019' borderRadius={5} onPress={() => this.filterByYear('2019-01-01')} />
+        </View>
           <Card
             data={hatHolder}
             navigation={this.props.navigation}
